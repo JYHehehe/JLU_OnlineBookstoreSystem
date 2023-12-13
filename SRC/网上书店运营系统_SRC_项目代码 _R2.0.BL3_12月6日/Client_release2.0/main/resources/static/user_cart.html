@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap-xinqi.css" />
+    <link rel="stylesheet" href="./css/animate.css" />
+    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="css/shop/main.css" />
+
+    <style>
+        th{
+            background-color: #85bdf8;
+            text-align: center;
+        }
+    </style>
+
+</head>
+<body>
+<!-- Header -->
+    <div class="wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 d-flex align-items-center">
+                    <p class="phone mb-0 ps-md-2">
+                        <a class="me-2"><span></span></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header" style="display:inline-block;margin-right:300px;">
+                <a href="" class="navbar-brand"><img alt="PC Partner Logo" width="70" height="70"
+                                                     src="https://img95.699pic.com/element/40023/4770.png_860.png" style="display: inline-block">
+                    <div style="display:inline-block;">JLU图书购物平台</div>
+                </a>
+            </div>
+            <!--导航-->
+            <div class="navbar-collapse collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li v-for="item in nav_state"><a v-bind:href="item.href"
+                                                     style="font-size:20px;font-weight:bold;color:#55aaff ">{{item.desc}}</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                </ul>
+                <!--        <ul class="nav navbar-nav navbar-right">-->
+                <!--            <li><a href="javascript:;">電話:(852) 2799 8011</a></li>-->
+                <!--        </ul>-->
+            </div>
+            <!--导航-->
+        </div>
+    </nav>
+
+<!-- Main -->
+<section id="main" >
+    <div class="inner" id="goods_list">
+        <br>
+<!--        <h1 style="color: orangered">我的购物车</h1>-->
+        <br> <br> <br>
+        <div>
+            <button class="blue button" onclick="select_all()">全部选择</button>
+            <button class="button" onclick="cancel_select_all()">全部取消</button>
+            <button class="blue button" onclick="reverse_select()">反向选择</button>
+            <button class="green button" onclick="pay_selected()">结算</button>
+            <button class="red button" onclick="delete_selected()">删除</button>
+        </div>
+        <br>
+        <br>
+        <table border="1" style="line-height: 2;width: 100%;text-align: center;
+            border-radius: 3px;" id="cart_list">
+            <tr>
+                <th style="text-align: center;width: 40px;">
+                    <input type="checkbox"  onclick="select_all()" />
+<!--                    全选<input type="checkbox"  onclick="select_all()" />-->
+                </th>
+                <th style="text-align: center">图书图片</th>
+                <th style="text-align: center">图书名称</th>
+                <th style="text-align: center">数量</th>
+                <th style="text-align: center">单价</th>
+                <th style="text-align: center">总额</th>
+                <th style="text-align: center">地址</th>
+                <th style="text-align: center">操作</th>
+            </tr>
+            <tr v-for="(item,index) in cart_list">
+                <td>
+                    <input name="select_cart" type="checkbox" :value="item.cart_id" />
+                </td>
+                <td style="width: 20%">
+                    <a onclick="return check_single_goods(href)" :href="item.goods_id">
+                        <img :src="item.view_address" style="width: 240px;height: 240px">
+                    </a>
+                </td>
+                <td style="width: 12%">
+                    {{item.goods_name}}
+                </td>
+<!--                商品数量-->
+<!--                可以编辑-->
+                <td  style="width: 8%">
+                    <div v-show="edit_state_list[index]==0">{{item.goods_amount}}</div>
+                    <div v-show="edit_state_list[index]==1">
+                        <input type="number" style="width: 80%;"
+                               v-model="item.goods_amount">
+                    </div>
+                </td>
+                <td style="width: 8%">
+                    {{item.unit_price}}
+                </td>
+                <td style="width: 8%">
+                    {{item.total_price}}
+                </td>
+                <td style="width: 20%">
+                    {{item.address_name}}
+<!--                    <div v-show="edit_state_list[index]==0">{{item.address_name}}</div>-->
+<!--                    <div v-show="edit_state_list[index]==1">-->
+<!--                        <select style="width: 80%" class="address">-->
+<!--                            <option v-for="(item,index) in address_list" :value="item.address_id">{{index+1}} {{item.address}}</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+                </td>
+                <td>
+                    <button class="green button" style="width: 50%;margin-bottom: 20px;" @click="pay_one_cart(item.cart_id,index)">结算</button>
+                    <button class="red button" style="width: 50%;margin-bottom: 20px;" @click="delete_one_cart(item.cart_id,index)">删除</button>
+                    <button class="button" style="width: 50%;margin-bottom: 20px;" @click="edit_one_cart(index)" :value="index" v-show="edit_state_list[index]==0">编辑</button>
+                    <button class="button" style="width: 50%;margin-bottom: 20px;letter-spacing: 1px" @click="update_one_cart(item,index)" :value="index" v-show="edit_state_list[index]==1">确认编辑</button>
+                </td>
+            </tr>
+        </table>
+        <p style="margin-top: 30px;">没有更多了</p>
+        <br>
+    </div>
+</section>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/vue.js"></script>
+<script>
+    <!--    全局js变量-->
+    var id=null;
+    var global_edit_state=0;
+
+    <!--    html加载完成时-->
+    $(document).ready(function () {
+        check_login_state();
+        vue_cart_list.query_cart_list();
+        // get_address_list();
+    })
+
+    function delete_one_cart(cart_id){
+        console.log(cart_id);
+    }
+
+    function check_login_state() {
+        //读取url的值
+        var user_id=get_url_var("id");
+        if(user_id!=false){
+            id=user_id;
+        }
+        vue_nav.refresh_nav();
+    }
+
+    function check_single_goods(goods_id){
+        goods_id=goods_id.split('/')[3]
+        if(id==null){
+            alert('请先登陆');
+            return false;
+        }
+        console.log(goods_id);
+        window.location.href='user_goods.html?id='+id+'&goods_id='+goods_id;
+        return false;
+    }
+
+    function get_url_var(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    function select_all() {
+        var check_list=document.getElementsByName("select_cart");
+        for (var i = 0; i < check_list.length; i++) {
+            check_list[i].checked=true;
+        }
+    }
+
+    function reverse_select() {
+        var check_list=document.getElementsByName("select_cart");
+        for (var i = 0; i < check_list.length; i++) {
+            if(check_list[i].checked){
+                check_list[i].checked=false;
+            }
+            else {
+                check_list[i].checked=true;
+            }
+        }
+    }
+
+    function cancel_select_all() {
+        var check_list=document.getElementsByName("select_cart");
+        for (var i = 0; i < check_list.length; i++) {
+            check_list[i].checked=false;
+        }
+    }
+
+    function pay_selected() {
+        var check_list=document.getElementsByName("select_cart");
+        var pay_list=[];
+        for (var i = 0; i < check_list.length; i++) {
+            if(check_list[i].checked){
+                pay_list.push(check_list[i].value);
+            }
+        }
+        if(pay_list.length===0){
+            alert('暂无选中项，请先选择！');
+            return;
+        }
+        if(confirm("确认支付？")===false){
+            return;
+        }
+        console.log('支付cart,cart_id='+pay_list);
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8080/order/pay_cart_list"
+            ,data:{
+                "cart_id_list":pay_list,
+            }
+            ,traditional:true
+            ,success:function(data){
+                console.log(data)
+                alert('成功支付：'+data[0]+'项\n支付失败(库存不足)：'+data[1]+'项')
+                vue_cart_list.query_cart_list();
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+    function delete_selected() {
+        var check_list=document.getElementsByName("select_cart");
+        var delete_list=[];
+        for (var i = 0; i < check_list.length; i++) {
+            if(check_list[i].checked){
+                delete_list.push(check_list[i].value);
+            }
+        }
+        if(delete_list.length===0){
+            alert('暂无选中项，请先选择！');
+            return;
+        }
+        if(confirm("确认删除？")===false){
+            return;
+        }
+        console.log('删除cart,cart_id='+delete_list);
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8080/order/delete_cart_list"
+            ,data:{
+                "cart_id_list":delete_list,
+            }
+            ,traditional:true
+            ,success:function(data){
+                console.log('成功删除：'+data+' cart')
+                vue_cart_list.query_cart_list();
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+    //获取收货地址
+    function get_address_list() {
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8080/user/get_address_list"
+            ,data:{
+                "id":id,
+            }
+            ,success:function(data){
+                // console.log(data);
+                if(data.length!=0){
+                    vue_cart_list.address_list=data;
+                }
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+
+    //购物车栏
+    var vue_cart_list=new Vue({
+        el:"#cart_list",
+        data:{
+            cart_list:[],
+            edit_state_list:[],
+            address_list:[
+                {
+                    address_id:0,
+                    address:'您暂无收货地址，请先创建'
+                }
+            ]
+        },
+        methods:{
+            query_cart_list:function () {
+                //this就是vue的实例vm
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/query_cart_list"
+                    ,data:{
+                        "user_id":id,
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.cart_list=data;
+                        // console.log(that.cart_list);
+                        that.edit_state_list=new Array(data.length).fill(0);
+                        // console.log(that.edit_state_list);
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            edit_one_cart:function (index) {
+                // alert(index);
+                this.$set(this.edit_state_list,index,1);
+            }
+            ,
+            update_one_cart:function (item,index){
+                // alert(index);
+                //获取一下信息
+                console.log(item);
+                //向数据库提交修改
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/update_cart_goods_amount"
+                    ,data:{
+                        "cart_id":item.cart_id,
+                        "goods_amount":item.goods_amount
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        item.total_price=item.goods_amount*item.unit_price;
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+                //取消编辑状态
+                this.$set(this.edit_state_list,index,0);
+            },
+            pay_one_cart:function (cart_id,index) {
+                if(confirm("确认支付？")===false){
+                    return;
+                }
+                console.log('支付cart,cart_id='+cart_id);
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/pay_one_cart"
+                    ,data:{
+                        "cart_id":cart_id,
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        if(data===0){
+                            var goods_name=vue_cart_list.cart_list[index].goods_name;
+                            alert('支付失败，'+goods_name+'库存不足!');
+                        }
+                        else{
+                            vue_cart_list.cart_list.splice(index,1);
+                        }
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            delete_one_cart:function (cart_id,index) {
+                if(confirm("确认删除？")===false){
+                    return;
+                }
+                console.log('删除cart,cart_id='+cart_id);
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/delete_one_cart"
+                    ,data:{
+                        "cart_id":cart_id,
+                    }
+                    ,success:function(data){
+                        vue_cart_list.cart_list.splice(index,1);
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            }
+        }
+    })
+
+    //导航栏
+    var vue_nav=new Vue({
+        el:"#nav",
+        data:{
+            nav_state:[],
+            home_page:'#'
+        },
+        methods:{
+            refresh_nav:function () {
+                if(id==null){
+                    this.nav_state=[{href:'login.html',desc:'您还未登陆，点击登陆'}];
+                }
+                else{
+                    // <a href="login.html">您还未登陆，请先登陆</a>
+                    // <a target="_blank" href="./user_cart.jsp?uid=null">我的购物车</a>
+                    // <a target="_blank" href="./user_order.jsp?uid=null">我的订单</a>
+                    // <a target="_blank" href="./user_info.jsp?uid=null">个人信息</a>
+                    this.nav_state=[
+                        {href:'user_goods_list.html?id='+id,desc:'返回首页'},
+                        {href:'user_cart.html?id='+id,desc:'我的购物车'},
+                        {href:'user_order.html?id='+id,desc:'我的订单'},
+                        {href:'user_info.html?id='+id,desc:'个人信息'}
+                    ];
+                    this.home_page='user_goods_list.html?id='+id;
+                }
+            }
+        }
+    })
+</script>
+
+    <!-- 去除浮动影响 -->
+    <div style="clear:both;"></div>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    &copy;&nbsp;Copyright 软件系统综合实践 by 小酸. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

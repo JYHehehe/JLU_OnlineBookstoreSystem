@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap-xinqi.css" />
+    <link rel="stylesheet" href="./css/animate.css" />
+    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="css/shop/main.css" />
+
+    <style>
+        th{
+            background-color: #85bdf8;
+            text-align: center;
+            font-size: 20px;
+        }
+        td{
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+    <div class="wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 d-flex align-items-center">
+                    <p class="phone mb-0 ps-md-2">
+                        <a class="me-2"><span></span></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header" style="display:inline-block;margin-right:300px;">
+                <a href="" class="navbar-brand"><img alt="PC Partner Logo" width="70" height="70"
+                                                     src="https://img95.699pic.com/element/40023/4770.png_860.png" style="display: inline-block">
+                    <div style="display:inline-block;">JLU图书购物平台</div>
+                </a>
+            </div>
+            <!--导航-->
+            <div class="navbar-collapse collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li v-for="item in nav_state"><a v-bind:href="item.href"
+                     style="font-size:20px;font-weight:bold;color:#55aaff ">{{item.desc}}</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                </ul>
+            </div>
+            <!--导航-->
+        </div>
+    </nav>
+<!-- Main -->
+<section id="main" >
+    <div class="inner" id="order_list" style="width: 80%;max-width: 200em;">
+<!--        <h1 style="color: orangered">我的订单</h1>-->
+
+        <hr>
+
+        <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <ul class="nav nav-tabs" style="font-size: 30px;font-weight: bold;">
+            <li><a style="color: #4b50b0" @click="query_order_list">我的订单</a></li>
+            <li><a style="color: #808080" @click="query_refund_order_list">已取消</a></li>
+        </ul>
+
+
+<!--        <button @click="query_order_list">我的订单</button>-->
+<!--        <button @click="query_refund_order_list">已取消</button>-->
+        <hr>
+        <br>
+        <table class="table table-striped" border="1" style="line-height: 2;width: 100%;text-align: center">
+            <thead>
+            <tr>
+                <th style="text-align: center">订单号</th>
+<!--                <th style="text-align: center">商品链接</th>-->
+                <th style="text-align: center">图书名</th>
+                <th style="text-align: center">数量</th>
+                <th style="text-align: center;width: fit-content">支付金额</th>
+                <th style="text-align: center">收货地址</th>
+                <th style="text-align: center">日期</th>
+                <th style="text-align: center">订单状态</th>
+                <th style="text-align: center">订单操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(item,index) in order_list">
+                <td>
+                    {{item.order_id}}
+                </td>
+<!--                <td style="width: 20%">-->
+<!--                    <a onclick="return check_single_goods(href)" :href="item.goods_id">-->
+<!--                        <img :src="item.view_address" style="width: 240px;height: 240px">-->
+<!--                    </a>-->
+<!--                </td>-->
+                <td style="width: 12%">
+                    <a onclick="return check_single_goods(href)" :href="item.goods_id">
+                        {{item.goods_name}}
+                    </a>
+                </td>
+                <td  style="width: 8%">
+                    {{item.goods_amount}}
+                </td>
+                <td style="width: 10%">
+                    {{item.paid_amount}}
+                </td>
+                <td>
+                    {{item.address_name}}
+                </td>
+                <td>
+                    {{item.date}}
+                </td>
+                <td>
+                    {{item.state_desc}}
+                </td>
+                <td style="width: 10%">
+                    <button class="button" style="letter-spacing:0px;" @click="direct_refund(item.order_id,index)" v-show="item.state===1">申请退款</button>
+                    <button class="button" style="letter-spacing:0px;" @click="sign_for_order(item.order_id,index)" v-show="item.state===2">确认签收</button>
+                    <button class="green button" style="letter-spacing:0px;" @click="goods_review(item.order_id)" v-show="item.state===3">评价商品</button>
+                    <button class="button" style="letter-spacing:0px;" @click="req_refund(item.order_id)" v-show="item.state===3">申请退款</button>
+                    <div style="width: 80%" v-show="item.state===4">已完成</div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p>没有更多了</p>
+        <br>
+    </div>
+</section>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/vue.js"></script>
+<script>
+    <!--    全局js变量-->
+    var id=null;
+
+    <!--    html加载完成时-->
+    $(document).ready(function () {
+        check_login_state();
+        vue_order_list.query_order_list();
+    })
+
+    function delete_one_cart(cart_id){
+        console.log(cart_id);
+    }
+
+    function check_login_state() {
+        //读取url的值
+        var user_id=get_url_var("id");
+        if(user_id!=false){
+            id=user_id;
+        }
+        vue_nav.refresh_nav();
+    }
+
+    function check_single_goods(goods_id){
+        goods_id=goods_id.split('/')[3]
+        if(id==null){
+            alert('请先登陆');
+            return false;
+        }
+        console.log(goods_id);
+        window.location.href='user_goods.html?id='+id+'&goods_id='+goods_id;
+        return false;
+    }
+
+    function get_url_var(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    //订单栏
+    var vue_order_list=new Vue({
+        el:"#order_list",
+        data:{
+            order_list:[],
+        },
+        methods:{
+            query_order_list:function () {
+                //this就是vue的实例vm
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/query_order_list"
+                    ,data:{
+                        "user_id":id,
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.order_list=data;
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            query_refund_order_list:function () {
+                //this就是vue的实例vm
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/query_refund_order_list"
+                    ,data:{
+                        "user_id":id,
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.order_list=data;
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            direct_refund:function (order_id,index) {
+                if(confirm("确认退款？")===false){
+                    return;
+                }
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/direct_refund"
+                    ,data:{
+                        "order_id":order_id,
+                    }
+                    ,success:function(data){
+                        console.log(data)
+                        alert("退款成功！");
+                        vue_order_list.order_list.splice(index,1);
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            req_refund:function (order_id) {
+                if(confirm("申请退款？")===false){
+                    return;
+                }
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/req_refund"
+                    ,data:{
+                        "order_id":order_id,
+                    }
+                    ,success:function(data){
+                        console.log(data)
+                        alert("已提交申请！");
+                        that.query_order_list();
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            sign_for_order:function (order_id,index) {
+                if(confirm("确认签收？")===false){
+                    return;
+                }
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/sign_for_order"
+                    ,data:{
+                        "order_id":order_id,
+                    }
+                    ,success:function(data){
+                        console.log(data)
+                        alert("签收成功！");
+                        // that.order_list[index].state_desc='已签收';
+                        that.query_order_list();
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            goods_review:function (order_id) {
+                alert('进入评价商品页面...');
+                window.location.href='user_goods_review.html?id='+id+'&order_id='+order_id;
+            },
+            pay_one_cart:function (cart_id,index) {
+                if(confirm("确认支付？")==false){
+                    return;
+                }
+                console.log('支付cart,cart_id='+cart_id);
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/pay_one_cart"
+                    ,data:{
+                        "cart_id":cart_id,
+                    }
+                    ,success:function(data){
+                        // console.log(data);
+                        // vue_cart_list.cart_list.splice(index,1);
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            delete_one_cart:function (cart_id,index) {
+                if(confirm("确认删除？")==false){
+                    return;
+                }
+                console.log('删除cart,cart_id='+cart_id);
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/order/delete_one_cart"
+                    ,data:{
+                        "cart_id":cart_id,
+                    }
+                    ,success:function(data){
+                        vue_cart_list.cart_list.splice(index,1);
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            }
+        }
+    })
+
+    //导航栏
+    var vue_nav=new Vue({
+        el:"#nav",
+        data:{
+            nav_state:[],
+            home_page:'#'
+        },
+        methods:{
+            refresh_nav:function () {
+                if(id==null){
+                    this.nav_state=[{href:'login.html',desc:'您还未登陆，点击登陆'}];
+                }
+                else{
+                    // <a href="login.html">您还未登陆，请先登陆</a>
+                    // <a target="_blank" href="./user_cart.jsp?uid=null">我的购物车</a>
+                    // <a target="_blank" href="./user_order.jsp?uid=null">我的订单</a>
+                    // <a target="_blank" href="./user_info.jsp?uid=null">个人信息</a>
+                    this.nav_state=[
+                        {href:'user_goods_list.html?id='+id,desc:'返回首页'},
+                        {href:'user_cart.html?id='+id,desc:'我的购物车'},
+                        {href:'user_order.html?id='+id,desc:'我的订单'},
+                        {href:'user_info.html?id='+id,desc:'个人信息'}
+                    ];
+                    this.home_page='user_goods_list.html?id='+id;
+                }
+            }
+        }
+    })
+</script>
+
+    <!-- 去除浮动影响 -->
+    <div style="clear:both;"></div>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    &copy;&nbsp;Copyright 软件系统综合实践 by 小酸. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

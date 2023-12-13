@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/shop/main.css"/>
+    <link rel="stylesheet" href="./css/bootstrap-xinqi.css"/>
+    <link rel="stylesheet" href="./css/shop/goods_list.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" href="./css/button.css">
+    <style>
+        #image_div{
+            width:35%;
+            height:515px;
+            /*background:lightgray;*/
+            /*border-radius: 15px;*/
+            border: 2px black solid;
+            float:left;
+        }
+        #video_div{
+            width:100%;
+            height:515px;
+            /*background:lightgray;*/
+            /*border-radius: 15px;*/
+            border: 2px black solid;
+            float:left;
+        }
+        .tips{
+            font-size: 25px;
+            font-weight: bold;
+            /*border: 3px #7aff81 solid;*/
+            text-align: center;
+            /*width: 70%;*/
+            background: #c5e7fd;
+            margin: 20px auto;
+            border-radius: 15px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+    <hr>
+    <nav class="navbar navbar-default">
+        <div class="container" >
+            <div class="navbar-header" style="margin-right:300px;display:inline-block;">
+                <a href="" class="navbar-brand"><img alt="PC Partner Logo" width="70" height="70"
+                                                     src="https://img95.699pic.com/element/40023/4770.png_860.png"
+                                                     style="display: inline-block">
+                    <div style="display:inline-block;">JLU网上书店管理端</div>
+                </a>
+            </div>
+            <!--导航-->
+            <div class="navbar-collapse collapse" id="nav"  style="display:inline-block;">
+                <ul class="nav navbar-nav" style="margin-right: 20px;">
+                    <li><a style="color: #4b50b0;font-size: 20px;" href="goods_management.html">商品管理</a></li>
+                    <li><a style="color: #4b50b0;font-size: 20px;" href="order_management.html">订单管理</a></li>
+                    <li><a style="color: #4b50b0;font-size: 20px;" href="analysis.html">统计分析</a></li>
+                </ul>
+            </div>
+            <!--导航-->
+        </div>
+    </nav>
+
+<!-- Main -->
+<section id="main" >
+    <div class="inner" id="goods">
+        <div style="height: 20px"></div>
+<!--        <h1>本页面为商品实际界面展示</h1>-->
+        <table border="0" style="line-height: 1.5;">
+            <tr>
+                <td><img v-bind:src="goods.view_address" style="width: 500px"></td>
+                <td width="50px"></td>
+                <td style="line-height: 1">
+                    <h1 style="margin-bottom: 20px;color: black;font-weight: bold">{{goods.name}}</h1>
+                    <p>{{goods.subtitle}}</p>
+                    <h4 style="margin-bottom: 20px;color: red;font-weight: bold">￥{{goods.price}} / 本</h4>
+                    <p>库存：{{goods.stock}} 本</p>
+                    <p>销量：{{goods.sale}} 本</p>
+                    <form>
+                        <p>购买数量：<input type="number" style="width: 200px;height: 25px" v-model="goods_amount"> 本</p>
+                        <p>收货地址：
+                            <select style="width: 198px;height: 25px" id="address">
+<!--                                <option v-for="item in goods_cat_list" v-bind:value="item.category_id">{{ item.name }}</option>-->
+                                <option v-for="(item,index) in address_list" :value="item.address_id">{{index+1}} {{item.address}}</option>
+                            </select>
+                        </p>
+                        <div class="operate_btn">
+                            <input class="red button" type="button" value="加入购物车">
+                            <input class="green button" type="button" value="立即购买">
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <hr>
+        <p class="tips">&emsp;图书信息</p>
+        <table style="line-height: 2;width: 100%" id="goods_info">
+        </table>
+        <br>
+<!--        <div id="image_div">-->
+<!--            <h3>##更多图片</h3>-->
+<!--            <p v-show="image_address==null">暂无更多图片</p>-->
+<!--            <div v-show="image_address!=null">-->
+<!--                <img :src="image_address" style="width: 95%;height: 430px;margin-left: 2.5%">-->
+<!--                <br>-->
+<!--                <button style="width: 47.5%;margin-left: 2.5%" @click="get_pre_image">上一张</button><button style="width: 47.5%;margin-right: 2.5%" @click="get_next_image">下一张</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div id="video_div">-->
+<!--            <h3>##演示视频</h3>-->
+<!--            <p v-show="goods.video_address==null">暂无演示视频</p>-->
+<!--            <video v-show="goods.video_address!=null" :src="goods.video_address" style="height: 430px;width: 100%" controls autoplay></video>-->
+<!--        </div>-->
+
+        <!-- 去除浮动影响 -->
+        <div style="clear:both;"></div>
+        <div>
+            <br>
+            <p class="tips">&emsp;图书描述</p>
+            <div v-for="item in goods.desc_list">
+                <br>
+                <p>{{item}}</p>
+            </div>
+        </div>
+        <br>
+        <p class="tips">&emsp;图书评价</p>
+        <hr>
+        <div v-for="item in review_list">
+            <p style="font-weight: bold;font-family: 'Calibri';display:inline-block;">用户{{item.user_id}} 于 {{item.date}}
+                ：<svg v-show="item.grade===1" t="1686828976730" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6478" width="32" height="32"><path d="M509.4 958.2c-60.4 0-118.9-11.9-174.1-35.1-53.2-22.5-101.1-54.8-142.1-95.9-41-41-73.3-88.9-95.9-142.1C74 629.9 62.2 571.4 62.2 511S74 392.1 97.3 337c22.5-53.2 54.8-101.1 95.9-142.1 41-41 88.9-73.3 142.1-95.9C390.5 75.7 449 63.9 509.4 63.9S628.3 75.7 683.5 99c53.2 22.5 101.1 54.8 142.1 95.9 41 41 73.3 88.9 95.9 142.1 23.3 55.2 35.1 113.7 35.1 174.1 0 60.4-11.9 118.9-35.1 174.1-22.5 53.3-54.8 101.1-95.9 142.1-41 41-88.9 73.3-142.1 95.9-55.2 23.2-113.7 35-174.1 35z m0-827.9c-209.9 0-380.7 170.8-380.7 380.7s170.8 380.7 380.7 380.7S890.1 720.9 890.1 511 719.3 130.3 509.4 130.3z" fill="" p-id="6479"></path><path d="M341.6 410.1m-55.9 0a55.9 55.9 0 1 0 111.8 0 55.9 55.9 0 1 0-111.8 0Z" fill="" p-id="6480"></path><path d="M677.2 409m-55.9 0a55.9 55.9 0 1 0 111.8 0 55.9 55.9 0 1 0-111.8 0Z" fill="" p-id="6481"></path><path d="M515.3 733.1c-88 0-153.8-69.7-156.6-72.8-11.3-12.1-10.6-31.1 1.6-42.4 12.1-11.3 31.1-10.6 42.3 1.5 0.9 0.9 51.4 53.7 112.7 53.7h2.3c34.6-0.8 67.4-19 97.7-54.2 10.8-12.6 29.8-14 42.3-3.2 12.6 10.8 14 29.8 3.2 42.3-42 48.8-89.9 74-142.4 75-1 0.1-2.1 0.1-3.1 0.1z" fill="" p-id="6482"></path></svg>
+                <svg v-show="item.grade===2" t="1686828948413" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5239" width="32" height="32"><path d="M509.4 958.2c-60.4 0-118.9-11.9-174.1-35.1-53.2-22.5-101.1-54.8-142.1-95.9-41-41-73.3-88.9-95.9-142.1C74 629.9 62.2 571.4 62.2 511S74 392.1 97.3 337c22.5-53.2 54.8-101.1 95.9-142.1 41-41 88.9-73.3 142.1-95.9C390.5 75.7 449 63.9 509.4 63.9S628.3 75.7 683.5 99c53.2 22.5 101.1 54.8 142.1 95.9 41 41 73.3 88.9 95.9 142.1 23.3 55.2 35.1 113.7 35.1 174.1S944.7 630 921.5 685.2c-22.5 53.3-54.8 101.1-95.9 142.1-41 41-88.9 73.3-142.1 95.9-55.2 23.2-113.7 35-174.1 35z m0-827.9c-209.9 0-380.7 170.8-380.7 380.7s170.8 380.7 380.7 380.7S890.1 720.9 890.1 511 719.3 130.3 509.4 130.3z" fill="" p-id="5240"></path><path d="M341.6 410.1m-55.9 0a55.9 55.9 0 1 0 111.8 0 55.9 55.9 0 1 0-111.8 0Z" fill="" p-id="5241"></path><path d="M677.2 409m-55.9 0a55.9 55.9 0 1 0 111.8 0 55.9 55.9 0 1 0-111.8 0Z" fill="" p-id="5242"></path><path d="M637.1 702.6h-256c-16.6 0-30-13.4-30-30s13.4-30 30-30h256c16.6 0 30 13.4 30 30s-13.5 30-30 30z" fill="" p-id="5243"></path></svg>
+                <svg v-show="item.grade===3" t="1686828894248" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4669" width="32" height="32"><path d="M509.4 958.2c-60.4 0-118.9-11.9-174.1-35.1-53.2-22.5-101.1-54.8-142.1-95.9-41-41-73.3-88.9-95.9-142.1C74 629.9 62.2 571.4 62.2 511S74 392.1 97.3 337c22.5-53.2 54.8-101.1 95.9-142.1 41-41 88.9-73.3 142.1-95.9C390.5 75.7 449 63.9 509.4 63.9S628.3 75.7 683.5 99c53.2 22.5 101.1 54.8 142.1 95.9 41 41 73.3 88.9 95.9 142.1 23.3 55.2 35.1 113.7 35.1 174.1S944.7 630 921.5 685.2c-22.5 53.3-54.8 101.1-95.9 142.1-41 41-88.9 73.3-142.1 95.9-55.2 23.2-113.7 35-174.1 35z m0-827.9c-209.9 0-380.7 170.8-380.7 380.7s170.8 380.7 380.7 380.7S890.1 720.9 890.1 511 719.3 130.3 509.4 130.3z" fill="" p-id="4670"></path><path d="M341.6 410.1m-55.9 0a55.9 55.9 0 1 0 111.8 0 55.9 55.9 0 1 0-111.8 0Z" fill="" p-id="4671"></path><path d="M677.2 409m-55.9 0a55.9 55.9 0 1 0 111.8 0 55.9 55.9 0 1 0-111.8 0Z" fill="" p-id="4672"></path><path d="M518.4 608.5c52.5 1 100.4 26.2 142.4 75 10.8 12.5 9.4 31.5-3.2 42.3-12.5 10.8-31.5 9.4-42.3-3.2-30.3-35.2-63.1-53.4-97.7-54.2h-2.3c-61.3 0-111.8 52.8-112.7 53.7-11.2 12.1-30.2 12.8-42.3 1.5-12.2-11.3-12.9-30.3-1.6-42.4 2.8-3.1 68.6-72.8 156.6-72.8 1 0 2.1 0 3.1 0.1z" fill="" p-id="4673"></path></svg>
+            <div v-show="item.grade===1" style="font-weight: bold;display:inline-block;">好评！</div>
+            <div v-show="item.grade===2" style="font-weight: bold;display:inline-block;">中评！</div>
+            <div v-show="item.grade===3" style="font-weight: bold;display:inline-block;">差评！</div>
+            </p>
+            <hr>
+            <p style="font-size: 20px">
+                {{item.describe}}
+            </p>
+            <hr>
+        </div>
+    </div>
+
+</section>
+
+<!--js代码-->
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="js/vue.js"></script>
+<script>
+    //商品ID
+    var goods_id=0;
+    $(document).ready(function () {
+        check_url();
+        get_goods();
+        get_goods_images();
+        get_review_list();
+    })
+    function check_url() {
+        //读取url的值
+        var goods_id=get_url_var("goods_id");
+        if(goods_id!=false){
+            window.goods_id=goods_id;
+        }
+    }
+    function get_url_var(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+    //获取商品信息
+    function get_goods() {
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8081/goods/get_goods"
+            ,data:{
+                "goods_id":goods_id,
+            }
+            ,success:function(data){
+                console.log(data);
+                vue_goods.goods=data;
+                //绘制info_list
+                if(data.info_list!=null){
+                    $("#goods_info").html("")
+                    for (var i = 0; i < data.info_list.length; i++) {
+                        if(i%4==0){
+                            $("#goods_info").append("<tr>");
+                        }
+                        $("#goods_info").append("<td style='width: 25%'>"+data.info_list[i]+"</td>");
+                        if (i%4==3){
+                            $("#goods_info").append("</tr>");
+                        }
+                    }
+                    while(i%4!=0){
+                        $("#goods_info").append("<td style='width: 25%'></td>");
+                        i=i+1;
+                    }
+                    $("#goods_info").append("</tr>");
+                }
+                else {
+                    $("#goods_info").html("<tr><th>暂无商品信息</th></tr>");
+                }
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+    //获取商品照片
+    function get_goods_images() {
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8081/goods/query_goods_image"
+            ,data:{
+                "goods_id":goods_id,
+            }
+            ,success:function(data){
+                console.log(data);
+                vue_goods.goods_images=data;
+                if(vue_goods.goods_images.length!=0){
+                    vue_goods.image_address=vue_goods.goods_images[0].image_address;
+                }
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+    //获取商品评价
+    function get_review_list() {
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8081/goods/query_review_list"
+            ,data:{
+                "goods_id":goods_id,
+            }
+            ,success:function(data){
+                // console.log(data);
+                if(data.length!=0){
+                    vue_goods.review_list=data;
+                }
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+    var vue_goods=new Vue({
+        el:"#goods",
+        data:{
+            goods:{},
+            goods_images:[],
+            image_index:0,
+            image_address:null,
+            address_list:[
+                {
+                    address_id:0,
+                    address:'默认收货地址'
+                }
+            ],
+            goods_amount:1,
+            review_list:[]
+        },
+        methods:{
+            get_next_image:function () {
+                if(this.image_index<this.goods_images.length-1){
+                    this.image_index++;
+                }
+                else {
+                    this.image_index=0;
+                }
+                this.image_address=this.goods_images[this.image_index].image_address;
+            },
+            get_pre_image:function () {
+                if(this.image_index>0){
+                    this.image_index--;
+                }
+                else {
+                    this.image_index=this.goods_images.length-1;
+                }
+                this.image_address=this.goods_images[this.image_index].image_address;
+            }
+        }
+    })
+
+</script>
+
+
+</body>
+</html>

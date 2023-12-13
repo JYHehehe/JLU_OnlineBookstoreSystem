@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>统计分析</title>
+    <link rel="stylesheet" href="./css/shop/main.css"/>
+    <link rel="stylesheet" href="./css/bootstrap-xinqi.css"/>
+    <link rel="stylesheet" href="./css/shop/goods_list.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <style>
+        .goods_tips{
+            font-size: 30px;
+            font-weight: bold;
+            border: 3px #4b50b0 solid;
+            text-align: center;
+            width: 100%;
+            margin: 20px auto;
+            border-radius: 15px;
+            line-height: 2;
+            color: #4b50b0;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+
+    <hr>
+    <nav class="navbar navbar-default">
+        <div class="container" >
+            <div class="navbar-header" style="margin-right:300px;display:inline-block;">
+                <a href="" class="navbar-brand"><img alt="PC Partner Logo" width="70" height="70"
+                                                     src="https://img95.699pic.com/element/40023/4770.png_860.png"
+                                                     style="display: inline-block">
+                    <div style="display:inline-block;">JLU网上书店管理端</div>
+                </a>
+            </div>
+            <!--导航-->
+            <div class="navbar-collapse collapse" id="nav"  style="display:inline-block;">
+                <ul class="nav navbar-nav" style="margin-right: 20px;">
+                    <li><a style="color: #4b50b0;font-size: 20px;" href="goods_management.html">商品管理</a></li>
+                    <li><a style="color: #4b50b0;font-size: 20px;" href="order_management.html">订单管理</a></li>
+                    <li><a style="color: #4b50b0;font-size: 20px;" href="analysis.html">统计分析</a></li>
+                </ul>
+            </div>
+            <!--导航-->
+        </div>
+    </nav>
+
+<!-- Main -->
+<section id="main" >
+    <div class="inner" id="analysis">
+        <h1 class="goods_tips">销售统计分析</h1>
+        <hr>
+        <button @click="change_state_to_1">销量统计</button>
+        <button @click="change_state_to_2">销售额统计</button>
+        <hr>
+        <br>
+        <div v-show="info_state===1">
+            <p class="tips">&emsp;分类统计</p>
+            <div id="show_div1" style="display:inline-block;width: 450px;height:400px;"></div>
+            <div id="show_div_pie1" style="display:inline-block;width: 450px;height:400px;"></div>
+
+            <p class="tips">&emsp;商品Top5</p>
+            <div id="show_div2" style="width: 800px;height:600px;"></div>
+        </div>
+
+        <div v-show="info_state===2">
+            <p class="tips">&emsp;分类统计</p>
+            <div id="show_div3" style="display:inline-block;width: 450px;height:400px;"></div>
+            <div id="show_div_pie2" style="display:inline-block;width: 450px;height:400px;"></div>
+
+            <p class="tips">&emsp;商品Top5</p>
+            <div id="show_div4" style="width: 800px;height:600px;"></div>
+        </div>
+
+
+
+        <br>
+    </div>
+</section>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+<script src="js/vue.js"></script>
+<script src="js/echarts.js"></script>
+<script>
+    <!--    全局js变量-->
+
+    <!--    html加载完成时-->
+    $(document).ready(function () {
+        vue_analysis.get_cat_sale();
+        vue_analysis.get_goods_sale();
+        vue_analysis.get_cat_amount();
+        vue_analysis.get_goods_amount();
+
+    })
+
+    function draw_div1() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('show_div1'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '各类别总销量柱状图'
+            },
+            tooltip: {},
+            legend: {
+                data: ['销量']
+            },
+            xAxis: {
+                data: vue_analysis.cat_name_list
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: '销量',
+                    type: 'bar',
+                    data: vue_analysis.cat_sale_list
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    function draw_div_pie1() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('show_div_pie1'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '各类别总销量扇形图'
+            },
+            series: [
+                {
+                    type: 'pie',
+                    data: vue_analysis.value_name_pie1
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    function draw_div2() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('show_div2'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '商品销量Top5柱状图'
+            },
+            tooltip: {},
+            legend: {
+                data: ['销量']
+            },
+            xAxis: {
+                data: vue_analysis.goods_name_list
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: '销量',
+                    type: 'bar',
+                    data: vue_analysis.goods_sale_list
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    function draw_div3() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('show_div3'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '各类别总销售额柱状图'
+            },
+            tooltip: {},
+            legend: {
+                data: ['销售金额']
+            },
+            xAxis: {
+                data: vue_analysis.cat_name_list
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: '销售金额',
+                    type: 'bar',
+                    data: vue_analysis.cat_amount_list
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    function draw_div_pie2() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('show_div_pie2'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '各类别总销售额扇形图'
+            },
+            series: [
+                {
+                    type: 'pie',
+                    data: vue_analysis.value_name_pie2
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    function draw_div4() {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('show_div4'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '商品销售金额Top5柱状图'
+            },
+            tooltip: {},
+            legend: {
+                data: ['销售金额']
+            },
+            xAxis: {
+                data: vue_analysis.goods_name_list
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: '销售金额',
+                    type: 'bar',
+                    data: vue_analysis.goods_amount_list
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    //订单栏
+    var vue_analysis=new Vue({
+        el:"#analysis",
+        data:{
+            cat_sale_list:[],
+            cat_name_list:[],
+            goods_sale_list:[],
+            goods_name_list:[],
+            cat_amount_list:[],
+            goods_amount_list:[],
+            value_name_pie1:[],
+            value_name_pie2:[],
+            info_state:1,
+        },
+        methods:{
+            change_state_to_1:function () {
+                this.info_state=1;
+            },
+            change_state_to_2:function () {
+                this.info_state=2;
+            },
+            get_cat_sale:function () {
+                //this就是vue的实例vm
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/sale/get_cat_sale"
+                    ,data:{
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.cat_sale_list=data.sale_list;
+                        that.cat_name_list=data.cat_name_list;
+                        draw_div1();
+
+                        that.value_name_pie1=[];
+                        for (var i = 0; i < that.cat_sale_list.length; i++) {
+                            that.value_name_pie1.push({name:that.cat_name_list[i],value:that.cat_sale_list[i]});
+                        }
+                        draw_div_pie1();
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            get_goods_sale:function () {
+                //this就是vue的实例vm
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/sale/get_goods_sale"
+                    ,data:{
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.goods_sale_list=data.sale_list;
+                        that.goods_name_list=data.goods_name_list;
+                        draw_div2();
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            get_cat_amount:function () {
+                //this就是vue的实例vm
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/sale/get_cat_amount"
+                    ,data:{
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.cat_amount_list=data.amount_list;
+                        draw_div3();
+
+                        that.value_name_pie2=[];
+                        for (var i = 0; i < that.cat_amount_list.length; i++) {
+                            that.value_name_pie2.push({name:that.cat_name_list[i],value:that.cat_amount_list[i]});
+                        }
+                        draw_div_pie2();
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            get_goods_amount:function () {
+                //this就是vue的实例vm
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/sale/get_goods_amount"
+                    ,data:{
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.goods_amount_list=data.amount_list;
+                        // that.goods_name_list=data.goods_name_list;
+                        draw_div4();
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+
+        }
+    })
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/bootstrap-xinqi.css" />
+    <link rel="stylesheet" href="./css/animate.css" />
+    <link rel="stylesheet" href="./css/button.css">
+    <link rel="stylesheet" href="css/shop/main.css" />
+    <style>
+        .tips{
+            font-size: 25px;
+            font-weight: bold;
+            /*border: 3px #7aff81 solid;*/
+            /*text-align: center;*/
+            /*width: 70%;*/
+            background: greenyellow;
+            margin: 20px auto;
+            border-radius: 15px;
+            line-height: 1.5;
+        }
+        p{
+            font-size: 18px;
+            font-weight: 600;
+            color: #0c0c0c;
+        }
+        th{
+            text-align: center;
+            background-color: #ffffff;
+        }
+        .f_input{
+            margin-left: 90px;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+    <div class="wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 d-flex align-items-center">
+                    <p class="phone mb-0 ps-md-2">
+                        <a class="me-2"><span></span></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header" style="display:inline-block;margin-right:300px;">
+                <a href="" class="navbar-brand"><img alt="PC Partner Logo" width="70" height="70"
+                                                     src="https://img95.699pic.com/element/40023/4770.png_860.png" style="display: inline-block">
+                    <div style="display:inline-block;">JLU图书购物平台</div>
+                </a>
+            </div>
+            <div class="navbar-collapse collapse" id="nav">
+                <ul class="nav navbar-nav">
+                    <li v-for="item in nav_state"><a v-bind:href="item.href"
+                                                     style="font-size:20px;font-weight:bold;color:#55aaff ">{{item.desc}}</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<!-- Main -->
+<section id="main" >
+    <div class="inner" id="user_info">
+<!--        <br>-->
+<!--        <h1 style="color: #fc0303">个人主页</h1>-->
+<!--        <br>-->
+<!--        <hr>-->
+        <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <hr>
+
+        <ul class="nav nav-tabs" style="font-size: 30px;font-weight: bold;">
+            <li><a style="color: #4b50b0" @click="change_state_to_1">修改用户密码</a></li>
+            <li><a style="color: #4b50b0" @click="change_state_to_2">我的收货地址</a></li>
+            <li><a style="color: #4b50b0" @click="change_state_to_3">添加收货地址</a></li>
+        </ul>
+
+
+
+<!--        <button class="large button" @click="change_state_to_1">修改用户密码</button>-->
+<!--        <button class="large button" @click="change_state_to_2">我的收货地址</button>-->
+<!--        <button class="large button" @click="change_state_to_3">添加收货地址</button>-->
+        <div>
+            <form class="f_input" v-show="info_state===1">
+                <hr>
+<!--                <p class="tips">&emsp;修改密码</p>-->
+                <p>原始密码  <input type="password" autofocus required v-model:value="old_password"></p>
+                <p>新的密码  <input type="password" required v-model:value="new_password"></p>
+                <p>确认密码  <input type="password" required v-model:value="confirm_password"></p>
+                <input class="green button" type="button" value="确认修改" @click="change_password">
+                <hr>
+            </form>
+            <form v-show="info_state===2">
+                <hr>
+<!--                <p class="tips">&emsp;已有收货地址</p>-->
+                <table class="table table-striped" border="1" style="line-height: 2;width: 100%;text-align: center" id="address_list">
+                    <thead>
+                    <tr style="-ms-grid-row-align: center">
+                        <th style="text-align: center"></th>
+                        <th style="text-align: center">收货地址</th>
+                        <th style="text-align: center">收货人姓名</th>
+                        <th style="text-align: center">电话号码</th>
+                    </tr>
+                    </thead>
+                    <tr v-for="(item,index) in address_list">
+                        <td>{{index+1}}</td>
+                        <td>
+                            {{item.address}}
+                        </td>
+                        <td>
+                            {{item.name}}
+                        </td>
+                        <td>
+                            {{item.phone_number}}
+                        </td>
+                    </tr>
+                </table>
+                <hr>
+            </form>
+            <form class="f_input" v-show="info_state===3">
+                <hr>
+<!--                <p class="tips">&emsp;新增收货地址</p>-->
+                <p>收货地址&emsp; <input v-model:value="address" type="text" autofocus required></p>
+                <p>收货人姓名 <input v-model:value="name" type="text" required></p>
+                <p>手机号码&emsp; <input v-model:value="phone_number" type="text" required></p>
+                <input class="green button" type="button" value="确认添加" @click="add_address">
+                <hr>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/vue.js"></script>
+<script>
+    <!--    全局js变量-->
+    var id=null;
+
+    <!--    html加载完成时-->
+    $(document).ready(function () {
+        check_login_state();
+        vue_user_info.get_address_list();
+    })
+
+    function check_login_state() {
+        //读取url的值
+        //读user_id
+        var user_id=get_url_var("id");
+        if(user_id!=false){
+            id=user_id;
+        }
+        vue_nav.refresh_nav();
+    }
+
+    function get_url_var(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    //订单栏
+    var vue_user_info=new Vue({
+        el:"#user_info",
+        data:{
+            info_state:1,
+            address_list:[],
+            old_password:'',
+            new_password:'',
+            confirm_password:'',
+            address:'',
+            name:'',
+            phone_number:'',
+        },
+        methods:{
+            change_state_to_1:function () {
+                this.info_state=1;
+            },
+            change_state_to_2:function () {
+                this.info_state=2;
+            },
+            change_state_to_3:function () {
+                this.info_state=3;
+            },
+            get_address_list:function () {
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/user/get_address_list"
+                    ,data:{
+                        "id":id,
+                    }
+                    ,success:function(data){
+                        // console.log(data);
+                        that.address_list=data;
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            add_address:function () {
+                if(this.address===''){
+                    alert('收货地址不能为空！');
+                    return;
+                }
+                if(this.name===''){
+                    alert('收货人姓名不能为空！');
+                    return;
+                }
+                if(this.phone_number===''){
+                    alert('手机号码不能为空！');
+                    return;
+                }
+                if(confirm("确认新增？")===false){
+                    return;
+                }
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/user/add_address"
+                    ,data:{
+                        "user_id":id,
+                        "address":this.address,
+                        "name":this.name,
+                        "phone_number":this.phone_number
+                    }
+                    ,success:function(data){
+                        that.address='';
+                        that.name='';
+                        that.phone_number='';
+                        alert('新增成功！');
+                        vue_user_info.get_address_list();
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            change_password:function () {
+                if(this.old_password===''){
+                    alert('旧密码不能为空！');
+                    return;
+                }
+                if(this.new_password===''){
+                    alert('新密码不能为空！');
+                    return;
+                }
+                if(this.new_password!==this.confirm_password){
+                    alert('两次输入密码不一致');
+                    return;
+                }
+                if(confirm("确认修改？")===false){
+                    return;
+                }
+                //发ajax请求
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8080/user/change_password"
+                    ,data:{
+                        "user_id":id,
+                        "old_password":this.old_password,
+                        "new_password":this.new_password
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        if(data===0){
+                            alert('原密码错误！');
+                        }
+                        else {
+                            alert('修改成功！即将跳转登录界面...');
+                            window.location.href="login.html";
+                            that.old_password='';
+                            that.new_password='';
+                            that.confirm_password='';
+                        }
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            }
+        }
+    })
+
+    //导航栏
+    var vue_nav=new Vue({
+        el:"#nav",
+        data:{
+            nav_state:[],
+            home_page:'#'
+        },
+        methods:{
+            refresh_nav:function () {
+                if(id==null){
+                    this.nav_state=[{href:'login.html',desc:'您还未登陆，点击登陆'}];
+                }
+                else{
+                    // <a href="login.html">您还未登陆，请先登陆</a>
+                    // <a target="_blank" href="./user_cart.jsp?uid=null">我的购物车</a>
+                    // <a target="_blank" href="./user_order.jsp?uid=null">我的订单</a>
+                    // <a target="_blank" href="./user_info.jsp?uid=null">个人信息</a>
+                    this.nav_state=[
+                        {href:'user_goods_list.html?id='+id,desc:'返回首页'},
+                        {href:'user_cart.html?id='+id,desc:'我的购物车'},
+                        {href:'user_order.html?id='+id,desc:'我的订单'},
+                        {href:'user_info.html?id='+id,desc:'个人信息'}
+                    ];
+                    this.home_page='user_goods_list.html?id='+id;
+                }
+            }
+        }
+    })
+</script>
+
+    <!-- 去除浮动影响 -->
+    <div style="clear:both;"></div>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    &copy;&nbsp;Copyright 软件系统综合实践 by 小酸. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
