@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="UTF-8">
+        <title>商城主页</title>
+
+
+        <link rel="stylesheet" href="./css/shop/main.css"/>
+        <link rel="stylesheet" href="./css/bootstrap-xinqi.css"/>
+        <link rel="stylesheet" href="./css/shop/goods_list.css"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+
+<!--        <link href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css" rel="stylesheet">-->
+        <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+        <!--    <link rel="stylesheet" href="./css/bootstrap.min.css"/>-->
+        <!--    <link rel="stylesheet" href="./css/animate.css"/>-->
+        <!--        <link rel="stylesheet" type="text/css" href="css/animate.min.css"/>-->
+        <!--        <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css"/>-->
+
+        <!--    <link rel="stylesheet" type="text/css" href="css/animate.min.css" />-->
+        <!--    <link rel="icon" href="img/favicon.ico" />-->
+        <!--    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />-->
+        <!--    <link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css" />-->
+        <!--    <link rel="stylesheet" type="text/css" href="css/style.css" />-->
+
+        <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">-->
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="container">
+                <div class="row">
+<!--                    <div class="col-md-6 d-flex align-items-center">-->
+                    <p class="phone mb-0 ps-md-2"></p>
+
+        <nav class="navbar navbar-default">
+            <div class="container" >
+                <div class="navbar-header" style="margin-right:300px;display:inline-block;">
+                    <a href="" class="navbar-brand"><img alt="PC Partner Logo" width="70" height="70"
+                                                         src="https://img95.699pic.com/element/40023/4770.png_860.png"
+                                                         style="display: inline-block">
+                        <div style="display:inline-block;">JLU图书购物平台</div>
+                    </a>
+                </div>
+                <!--导航-->
+                <div class="navbar-collapse collapse" id="nav"  style="display:inline-block;">
+                    <ul class="nav navbar-nav" v-for="item in nav_state" style="margin-right: 20px;">
+                        <li><a v-bind:href="item.href" style="font-size:20px;font-weight:bold;color:#55aaff ">{{item.desc}}</a></li>
+                    </ul>
+                </div>
+                <!--导航-->
+            </div>
+        </nav>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Main -->
+        <section id="main">
+            <div class="inner" id="goods_list">
+                <form>
+                    <div class="input-group mt-3 mb-3">
+<!--                        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"  style="display: inline-block">-->
+<!--                            全部分类-->
+<!--                        </button>-->
+<!--                        <select style="width: 120px" id="goods_cat">-->
+<!--                            <option v-for="item in goods_cat_list" v-bind:value="item.category_id">{{ item.name }}-->
+<!--                            </option>-->
+<!--                        </select>-->
+<!--                        <ul class="dropdown-menu">-->
+<!--                            <li><a class="dropdown-item">好评</a></li>-->
+<!--                            <li><a class="dropdown-item">中评</a></li>-->
+<!--                            <li><a class="dropdown-item">差评</a></li>-->
+<!--                        </ul>-->
+<!--                        <input type="text" class="form-control" placeholder="请输入图书关键字" style="display: inline-block">-->
+                    </div>
+                    <p style="margin-bottom: 30px;margin-top: 30px;font-size: 25px;">
+                        <div style="font-weight: 500;display: inline-block;font-size: 22px;">
+                            图书类别：
+                        <select style="width: 100px;height: 45px;" id="goods_cat">
+                        <option v-for="item in goods_cat_list" v-bind:value="item.category_id">{{ item.name }}
+                        </option>
+                        </select>
+                        </div>
+
+                    <input type="text"  placeholder="请输入图书关键字" style="width: 650px;height: 50px;border-color: #1e9fff;font-size: 22px;"
+                           v-model="goods_name">
+                    <input class="btn btn-primary" type="button" value="搜索" onclick="search()">
+                    </p>
+                    <center>
+                        <div class="jumbotron banner wow fadeInRight" style="width: 100%;height: 200px;"></div>
+                    </center>
+                    <p style="font-size: 20px;margin-bottom: 20px;">
+                        排序方式：
+                        <select style="width: 120px;height: 40px;margin-right: 20px" id="sort_way">
+                            <option v-for="item in sort_way_list" v-bind:value="item.sort_id">{{ item.name }}</option>
+                        </select>
+                        价格区间：<input type="number" style="width: 65px" v-model="min_price">
+                        -
+                        <input type="number" style="width: 65px" v-model="max_price"> 元
+                    </P>
+                </form>
+
+                <div id="shoplist" style="width: 1000px">
+                    <div class="goods" v-for="item in goods_list">
+                        <div class="shopimg">
+                            <a onclick="return check_single_goods(href)" v-bind:href="item.goods_id">
+                                <img class="goodsImgShow" v-bind:src="item.view_address"
+                                     style="width: 200px;height: 200px">
+                            </a>
+                        </div>
+                        <div style="margin-left: 30px">
+                            <div class="describe"><p>{{item.name}}</p></div>
+                            <div class="price"><p>￥{{item.price}}</p></div>
+                            <div class="state"><p style="width:199px">{{item.subtitle.substring(0,25)+"..."}}</p></div>
+                        </div>
+<!--                        <div class="comments"><p>销量：{{item.sale}}件</p></div>-->
+<!--                        <div class="state"><p>库存：{{item.stock}}件</p></div>-->
+                    </div>
+                </div>
+                <br>
+                <br>
+                <p></p>
+                <br>
+            </div>
+        </section>
+
+        <script src="js/jquery-3.6.0.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="js/vue.js"></script>
+        <script>
+
+            <!--全局js变量-->
+            var id = null;
+
+            <!--    html加载完成时-->
+            $(document).ready(function () {
+                vue_goods_list.query_all_goods_cat();
+                search_all_goods();
+                check_login_state();
+                vue_nav.refresh_nav();
+            })
+
+            function check_single_goods(goods_id) {
+                goods_id = goods_id.split('/')[3]
+                if (id == null) {
+                    alert('请先登陆');
+                    return false;
+                }
+                console.log(goods_id);
+                window.location.href = 'user_goods.html?id=' + id + '&goods_id=' + goods_id;
+                return false;
+            }
+
+            function check_login_state() {
+                //读取url的值
+                var user_id = get_url_var("id");
+                if (user_id != false) {
+                    id = user_id;
+                }
+
+            }
+
+            function get_url_var(variable) {
+                var query = window.location.search.substring(1);
+                var vars = query.split("&");
+                for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split("=");
+                    if (pair[0] == variable) {
+                        return pair[1];
+                    }
+                }
+                return (false);
+            }
+
+            function search_all_goods() {
+                $.ajax({
+                    type: "post"
+                    , url: "http://localhost:8080/goods/query_all_goods"
+                    , data: {
+                        // "name":$("#uname").val(),
+                        // "password":$("#upwd").val()
+                    }
+                    , success: function (data) {
+                        // console.log(data);
+                        vue_goods_list.goods_list = data;
+                    }
+                    , error: function (err) {
+                        alert(err.result);
+                    }
+                });
+            }
+
+            function search() {
+                //获取筛选条件
+                var category_id = $("#goods_cat option:selected").val();
+                var sort_id = $("#sort_way option:selected").val();
+                var min_price = vue_goods_list.min_price;
+                var max_price = vue_goods_list.max_price;
+                var goods_name = vue_goods_list.goods_name;
+                $.ajax({
+                    type: "post"
+                    , url: "http://localhost:8080/goods/query_goods_list"
+                    , data: {
+                        "category_id": category_id,
+                        "sort_id": sort_id,
+                        "min_price": min_price,
+                        "max_price": max_price,
+                        "goods_name": goods_name
+                    }
+                    , success: function (data) {
+                        // console.log(data);
+                        vue_goods_list.goods_list = data;
+                    }
+                    , error: function (err) {
+                        alert(err.result);
+                    }
+                });
+            }
+
+            //VUE
+            var vue_goods_list = new Vue({
+                el: "#goods_list",
+                data: {
+                    goods_cat_list: [],
+                    goods_list: [],
+                    goods_name: '',
+                    min_price: 0,
+                    max_price: 100,
+                    sort_way_list: [
+                        {name: '默认排序', sort_id: 0},
+                        {name: '按销量排序', sort_id: 1},
+                        {name: '高价优先', sort_id: 2},
+                        {name: '低价优先', sort_id: 3}
+                    ]
+                },
+                methods: {
+                    query_all_goods_cat: function () {
+                        //this就是vue的实例vm
+                        var that = this
+                        axios.get('http://localhost:8080/goods/query_all_goods_cat').then(
+                            function (response) {
+                                console.log(response);
+                                that.goods_cat_list = response.data;
+                            }, function (err) {
+                                alert('错误');
+                                console.log(err);
+                            }
+                        )
+                    }
+                }
+            })
+
+            var vue_nav = new Vue({
+                el: "#nav",
+                data: {
+                    nav_state: [],
+                },
+                methods: {
+                    refresh_nav: function () {
+                        if (id == null) {
+                            this.nav_state = [{href: 'login.html', desc: '您还未登陆，点击登陆'}];
+                        } else {
+                            // <a href="login.html">您还未登陆，请先登陆</a>
+                            // <a target="_blank" href="./user_cart.jsp?uid=null">我的购物车</a>
+                            // <a target="_blank" href="./user_order.jsp?uid=null">我的订单</a>
+                            // <a target="_blank" href="./user_info.jsp?uid=null">个人信息</a>
+                            this.nav_state = [
+                                // {href:'user_goods_list.html?id='+id,desc:'返回首页'},
+                                {href: 'user_cart.html?id=' + id, desc: '我的购物车'},
+                                {href: 'user_order.html?id=' + id, desc: '我的订单'},
+                                {href: 'user_info.html?id=' + id, desc: '个人信息'}
+                            ]
+                        }
+                        console.log(this.nav_state);
+                    }
+                }
+            })
+        </script>
+
+
+        <!-- 去除浮动影响 -->
+        <div style="clear:both;"></div>
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        &copy;&nbsp;Copyright 软件系统综合实践 by 小酸. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </body>
+</html>

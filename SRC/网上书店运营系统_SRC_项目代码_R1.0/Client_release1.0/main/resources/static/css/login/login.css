@@ -1,0 +1,100 @@
+@charset "UTF-8";
+* {
+            margin: 0;
+            padding: 0;
+}
+
+/*#a{*/
+/*	text-align: right;*/
+/*}*/
+         
+html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    /*background: url(../../images/login.jpg) no-repeat 0px 0px;*/
+    /*background-repeat: no-repeat;*/
+    background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+}
+ 
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+ 
+#loginDiv {
+    width: 50%;
+    display: contents;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+    background-color: lightgray;
+    box-shadow: 7px 7px 17px rgba(52, 56, 66, 0.5);
+    border-radius: 5px;
+}
+
+h1{
+    text-align: center;font-size:50px;color: mediumpurple;
+    letter-spacing: 2px;
+    height: 100px;
+}
+
+p {
+    margin-top: 30px;
+    margin-left: 20px;
+    color: #363636;
+    font-size: 22px;
+    font-weight: bold;
+}
+ 
+/*input {*/
+/*    margin-left: 15px;*/
+/*    border-radius: 5px;*/
+/*    border-style: hidden;*/
+/*    height: 30px;*/
+/*    width: 140px;*/
+/*    background-color: rgba(216, 191, 216, 0.5);*/
+/*    outline: none;*/
+/*    color: black;*/
+/*    padding-left: 10px;*/
+/*}*/
+ 
+.button {
+    border-color: cornsilk;
+    background-color: rgba(100, 149, 237, .7);
+    color: aliceblue;
+    border-style: hidden;
+    border-radius: 5px;
+    width: 100px;
+    height: 31px;
+    font-size: 20px;
+}
+
+input, select {
+	/*margin-left: 15px;*/
+	/*border-radius: 5px;*/
+	/*border-style: hidden;*/
+	/*height: 30px;*/
+	/*width: 140px;*/
+	/*background-color: lightpink;*/
+	/*outline: none;*/
+	/*color: black;*/
+	padding-left: 10px;
+
+    height: 40px;
+    width: 250px;
+    margin-top: 20px;
+    border: #222 3px solid;
+    border-radius: 4px;
+    font-size: 20px;
+
+}
+
+form{
+    height: 400px;
+}

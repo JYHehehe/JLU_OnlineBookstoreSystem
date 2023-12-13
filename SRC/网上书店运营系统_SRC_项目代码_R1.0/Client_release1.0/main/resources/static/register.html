@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <link rel="stylesheet" href="./css/login/login.css"/>
+    <link rel="stylesheet" href="css/button.css" type="text/css">
+    <link rel="stylesheet" href="css/dynamic.css">
+</head>
+<body>
+<div id="loginDiv">
+    <form name="a" id="form" method="post">
+        <h1>网上书店用户注册</h1>
+        <div id="a">
+            <p>用&nbsp;户&nbsp;名 : <input name="name" id="uname" type="text" autofocus required></p>
+
+            <p>用户密码: <input name="password" id="upwd" type="password" required></p>
+
+            <p>确认密码: <input name="sure_upwd" id="sure_upwd" type="password" required></p>
+
+        </div>
+        <div style="text-align: center;margin-top: 30px;">
+            <input type="button" id="submit_button" class="blue button"
+                   style="height:40px;margin-right: 30px;" value="注册">
+            <input type="button" onclick="back()" class="button"
+                   style="height:40px;" value="返回">
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    // function register(){
+    //     if(document.a.uname.value==""){
+    //         alert("用户名不能为空！");
+    //         return;
+    //     }
+    //     if(document.a.uname.value.match(/[\x01-\xFF]*/)==false){
+    //         alert("用户名只能是字母或数字！");
+    //         return;
+    //     }
+    //     if(document.a.upwd.value==""){
+    //         alert("密码不能为空！");
+    //         return;
+    //     }
+    //     if(document.a.upwd.value!=document.a.sure_upwd.value){
+    //         alert("两次密码输入不一致！");
+    //         return;
+    //     }
+    //     if(document.a.upwd.value.match(/[\x01-\xFF]*/)==false){
+    //         alert("密码只能是字母或数字！");
+    //         return;
+    //     }
+    //     document.a.action="login/register";
+    //     document.a.submit();
+    // }
+    function back() {
+        window.location.href='login.html';
+    }
+    $(document).ready(function() {
+        $("#submit_button").click(function() {
+            //先检查一下输入是否合法
+            if(document.a.uname.value==""){
+                alert("用户名不能为空！");
+                return;
+            }
+            if(document.a.upwd.value==""){
+                alert("密码不能为空！");
+                return;
+            }
+            var regexp=new RegExp("^[a-zA-Z0-9]+$");
+            if(regexp.test(document.a.uname.value)==false){
+                alert("用户名只能是英文字母或数字！");
+                return;
+            }
+            if(regexp.test(document.a.upwd.value)==false){
+                alert("密码只能是英文字母或数字！");
+                document.a.upwd.value="";
+                return;
+            }
+            if(document.a.upwd.value!=document.a.sure_upwd.value){
+                alert("两次密码输入不一致！");
+                return;
+            }
+            // alert('提交');
+            //ajax提交表单
+            $.ajax({
+                type:"post"
+                ,url:"http://localhost:8080/user/register"
+                ,data:{
+                    "name":$("#uname").val(),
+                    "password":$("#upwd").val()
+                }
+                ,success:function(data){
+                    console.log(data);
+                    //注册成功
+                    if(data==0){
+                        alert('注册成功！');
+                    }
+                    else {
+                        alert('该用户名已存在！');
+                    }
+                }
+                ,error:function(err){
+                    alert(err.result);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
