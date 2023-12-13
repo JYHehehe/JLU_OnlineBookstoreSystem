@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <link rel="stylesheet" href="./css/login/login.css"/>
+    <link rel="stylesheet" href="css/button.css" type="text/css">
+    <link rel="stylesheet" href="css/dynamic.css">
+</head>
+<body>
+    <div id="loginDiv">
+            <form name="a" id="form" method="post">
+            <h1>欢迎来到JLU网上书店</h1>
+                <div id="a" style="text-align: center;">
+                    <p>用户名：<input name="name" id="uname" type="text"></p>
+                    <p>密&nbsp;&nbsp;&nbsp;码：<input name="password" id="upwd" type="password"></p>
+                </div>
+                <div style="text-align: center;margin-top: 30px;">
+                    <input type="button" onclick="login()" class="blue button"
+                           style="height:40px;margin-right: 30px;" value="登陆">
+                    <input type="button" onclick="register()" class="button"
+                           style="height:40px;" value="注册">
+                </div>
+            </form>
+    </div>
+
+    <div class="square">
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="circle">
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>
+        function login(){
+            if(document.a.uname.value==""){
+                alert("用户名不能为空！");
+                return;
+            }
+            if(document.a.upwd.value==""){
+                alert("密码不能为空！");
+                return;
+            }
+            var regexp=new RegExp("^[a-zA-Z0-9]+$");
+            if(regexp.test(document.a.uname.value)==false){
+                alert("用户名只能是英文字母或数字！");
+                return;
+            }
+            if(regexp.test(document.a.upwd.value)==false){
+                alert("密码只能是英文字母或数字！");
+                document.a.upwd.value="";
+                return;
+            }
+            //ajax提交表单
+            $.ajax({
+                type:"post"
+                ,url:"http://localhost:8080/user/login_check"
+                ,data:{
+                    "name":$("#uname").val(),
+                    "password":$("#upwd").val()
+                }
+                ,success:function(data){
+                    console.log(data);
+                    //注册成功
+                    if(data==0){
+                        alert('用户名或密码不正确！');
+                    }
+                    else {
+                        //登陆成功
+                        alert('登陆成功！')
+                        //页面跳转
+                        //拼接url
+                        window.location.href='user_goods_list.html?id='+data;
+                    }
+                }
+                ,error:function(err){
+                    alert(err.result);
+                }
+            });
+        }
+        function register() {
+            window.location.href='register.html';
+    }
+    </script>
+</body>
+</html>

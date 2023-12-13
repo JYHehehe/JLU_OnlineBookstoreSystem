@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>商城主页</title>
+    <link rel="stylesheet" href="css/shop/main.css" />
+    <link rel="stylesheet" href="./css/shop/goods_list.css" />
+</head>
+<body>
+<!-- Header -->
+<header id="header">
+    <div class="inner">
+        <a href="#" class="logo">超市系统后台</a>
+        <nav id="nav">
+            <a href="admin_goods_list.html">界面展示</a>
+            <a href="goods_management.html">商品管理</a>
+            <a href="order_management.html">订单管理</a>
+            <a href="analysis.html">统计分析</a>
+        </nav>
+    </div>
+</header>
+<!-- Main -->
+<section id="main" >
+    <div class="inner" id="goods_list">
+        <br><br><hr>
+        <h1 style="color: orangered">商品列表</h1>
+        <form>
+            <P>商品检索：<input type="text" style="width: 650px" v-model="goods_name"><input type="button" value="搜索" onclick="search()"></P>
+            <p>商品类别：
+            <select style="width: 120px" id="goods_cat">
+                <option v-for="item in goods_cat_list" v-bind:value="item.category_id">{{ item.name }}</option>
+            </select>
+            排序方式：
+            <select style="width: 120px" id="sort_way">
+                <option v-for="item in sort_way_list" v-bind:value="item.sort_id">{{ item.name }}</option>
+            </select>
+            价格区间：<input type="number" style="width: 100px" v-model="min_price">
+                -
+                <input type="number" style="width: 100px" v-model="max_price"> 元
+            </P>
+        </form>
+        <hr><br>
+        <div id="shoplist">
+            <div class="goods" v-for="item in goods_list">
+                <div class="shopimg">
+                    <a onclick="return check_single_goods(href)" v-bind:href="item.goods_id">
+                        <img class="goodsImgShow" v-bind:src="item.view_address" style="width: 240px;height: 240px">
+                    </a>
+                </div>
+                <div class="describe"><p>{{item.name}} {{item.subtitle}}</p></div>
+                <div class="price"><p>￥{{item.price}}</p></div>
+                <div class="comments"><p>销量：{{item.sale}}件</p></div>
+                <div class="state"><p>库存：{{item.stock}}件</p></div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+
+    </div>
+</section>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/vue.js"></script>
+<script>
+
+<!--    全局js变量-->
+var id=null;
+
+<!--    html加载完成时-->
+    $(document).ready(function () {
+        vue_goods_list.query_all_goods_cat();
+        search_all_goods();
+        // check_login_state();
+        // vue_nav.refresh_nav();
+    })
+
+    function check_single_goods(goods_id){
+        goods_id=goods_id.split('/')[3]
+        console.log(goods_id);
+        window.location.href='admin_goods.html?goods_id='+goods_id;
+        return false;
+    }
+
+    function check_login_state() {
+        //读取url的值
+        var user_id=get_url_var("id");
+        if(user_id!=false){
+            id=user_id;
+        }
+
+    }
+
+    function get_url_var(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+
+    function search_all_goods(){
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8081/goods/query_all_goods"
+            ,data:{
+            }
+            ,success:function(data){
+                // console.log(data);
+                vue_goods_list.goods_list=data;
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+    function search(){
+        //获取筛选条件
+        var category_id=$("#goods_cat option:selected").val();
+        var sort_id=$("#sort_way option:selected").val();
+        var min_price=vue_goods_list.min_price;
+        var max_price=vue_goods_list.max_price;
+        var goods_name=vue_goods_list.goods_name;
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8081/goods/query_goods_list"
+            ,data:{
+                "category_id":category_id,
+                "sort_id":sort_id,
+                "min_price":min_price,
+                "max_price":max_price,
+                "goods_name":goods_name
+            }
+            ,success:function(data){
+                // console.log(data);
+                vue_goods_list.goods_list=data;
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+    //VUE
+    var vue_goods_list=new Vue({
+        el:"#goods_list",
+        data:{
+            goods_cat_list:[],
+            goods_list:[],
+            goods_name:'',
+            min_price:0,
+            max_price:100000,
+            sort_way_list:[
+                {name:'默认排序',sort_id:0},
+                {name:'按销量排序',sort_id:1},
+                {name:'高价优先',sort_id:2},
+                {name:'低价优先',sort_id:3}
+            ]
+        },
+        methods:{
+            query_all_goods_cat:function () {
+                //this就是vue的实例vm
+                var that=this
+                axios.get('http://localhost:8081/goods/query_all_goods_cat').then(
+                    function (response) {
+                        console.log(response);
+                        that.goods_cat_list=response.data;
+                    },function (err){
+                        alert('错误');
+                        console.log(err);
+                    }
+                )
+            }
+        }
+    })
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理</title>
+    <link rel="stylesheet" href="./css/shop/main.css"/>
+    <link rel="stylesheet" href="./css/bootstrap-xinqi.css"/>
+    <link rel="stylesheet" href="./css/shop/goods_list.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/button.css"/>
+    <style>
+        .tips{
+            font-size: 25px;
+            font-weight: bold;
+            /*border: 3px #7aff81 solid;*/
+            /*text-align: center;*/
+            /*width: 70%;*/
+            background: greenyellow;
+            margin: 20px auto;
+            border-radius: 15px;
+            line-height: 1.5;
+        }
+         .goods_tips{
+             font-size: 30px;
+             font-weight: bold;
+             border: 3px #4b50b0 solid;
+             text-align: center;
+             width: 100%;
+             margin: 20px auto;
+             border-radius: 15px;
+             line-height: 2;
+             color: #4b50b0;
+         }
+        #add_goods input{
+            width: 400px;
+            height: 30px
+        }
+
+        #modify_goods input{
+            width: 400px;
+            height: 30px
+        }
+
+        #file_upload input{
+            width: 400px;
+            height: 30px
+        }
+
+        th{
+            text-align: center;
+            background-color: #ffffff;
+        }
+
+    </style>
+</head>
+<body>
+<!-- Header -->
+<!--    <div class="wrap">-->
+<!--        <div class="container">-->
+<!--            <div class="row">-->
+<!--                &lt;!&ndash;                    <div class="col-md-6 d-flex align-items-center">&ndash;&gt;-->
+<!--                <p class="phone mb-0 ps-md-2"></p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <hr>
+                <nav class="navbar navbar-default">
+                    <div class="container" >
+                        <div class="navbar-header" style="margin-right:300px;display:inline-block;">
+                            <a href="" class="navbar-brand"><img alt="PC Partner Logo" width="70" height="70"
+                                                                 src="https://img95.699pic.com/element/40023/4770.png_860.png"
+                                                                 style="display: inline-block">
+                                <div style="display:inline-block;">JLU网上书店管理端</div>
+                            </a>
+                        </div>
+                        <!--导航-->
+                        <div class="navbar-collapse collapse" id="nav"  style="display:inline-block;">
+                            <ul class="nav navbar-nav" style="margin-right: 20px;">
+                                <li><a style="color: #4b50b0;font-size: 20px;" href="goods_management.html">商品管理</a></li>
+                                <li><a style="color: #4b50b0;font-size: 20px;" href="order_management.html">订单管理</a></li>
+                                <li><a style="color: #4b50b0;font-size: 20px;" href="analysis.html">统计分析</a></li>
+                            </ul>
+                        </div>
+                        <!--导航-->
+                    </div>
+                </nav>
+
+
+<!-- Main -->
+<section id="main" >
+    <div class="inner" id="goods_management">
+        <h1 class="goods_tips">商品管理</h1>
+        <hr>
+        <button @click="change_state_to_1">图书速览</button>
+        <button @click="change_state_to_2">新增图书</button>
+        <button @click="change_state_to_3">编辑图书</button>
+        <button @click="change_state_to_4">图片上传</button>
+        <hr>
+        <div>
+            <div v-show="info_state===1">
+<!--                <hr>-->
+<!--                <p class="tips">&emsp;商品速览</p>-->
+                <P>商品检索：<input type="text" style="width: 650px" v-model="search_goods_name"><input type="button" value="搜索" onclick="search()"></P>
+                <p>商品类别：
+                    <select style="width: 120px" id="goods_cat">
+                        <option v-for="item in goods_cat_list" v-bind:value="item.category_id">{{ item.name }}</option>
+                    </select>
+                    排序方式：
+                    <select style="width: 120px" id="sort_way">
+                        <option v-for="item in sort_way_list" v-bind:value="item.sort_id">{{ item.name }}</option>
+                    </select>
+                    价格区间：<input type="number" style="width: 100px" v-model="search_min_price">
+                    -
+                    <input type="number" style="width: 100px" v-model="search_max_price"> 元
+                </P>
+<!--                <button onclick="downLoadPdf()">导出数据</button>-->
+<!--                <br><br>-->
+
+                <table class="table table-striped" border="1" style="line-height: 2;width: 100%;text-align: center" id="goods_table">
+                    <thead>
+                    <tr>
+                        <th>商品ID</th>
+                        <th>商品名</th>
+                        <th>商品价格</th>
+                        <th>商品库存</th>
+                        <th>商品销量</th>
+                        <th>商品类别</th>
+<!--                        <th></th>-->
+                    </tr>
+                    </thead>
+                    <tr v-for="(item,index) in goods_list">
+                        <td>
+                            {{item.goods_id}}
+                        </td>
+                        <td>
+                            <a style="color:#4b50b0;" @click="check_goods_detail(item.goods_id)">{{item.name}}</a>
+                        </td>
+                        <td>
+                            {{item.price}}
+                        </td>
+                        <td>
+                            {{item.stock}}
+                        </td>
+                        <td>
+                            {{item.sale}}
+                        </td>
+                        <td>
+                            {{goods_cat_list[item.category_id].name}}
+                        </td>
+<!--                        <td>-->
+<!--                            <input type="button" @click="check_goods_detail(item.goods_id)" value="链接">-->
+<!--                        </td>-->
+                    </tr>
+                </table>
+                <hr>
+            </div>
+
+            <div v-show="info_state===2" style="line-height: 2" id="add_goods">
+                <hr>
+<!--                <p class="tips">&emsp;新增商品</p>-->
+                <p>商品名&emsp;&emsp; <input v-model:value="add_name" type="text" autofocus required></p>
+                <p>标题描述&emsp; <input v-model:value="add_subtitle" type="text" required></p>
+                <p>商品单价&emsp; <input style="width: 100px;" v-model:value="add_price" type="number" required> 元</p>
+                <p>商品库存&emsp; <input style="width: 100px;" v-model:value="add_stock" type="number" required> 件</p>
+                <p>关键词&emsp;&emsp; <input v-model:value="add_key_words" type="text" required></p>
+                商品类别&emsp;
+                <select style="width: 100px;height: 30px" id="add_goods_cat">
+                    <option v-for="item in goods_cat_list" :value="item.category_id">{{ item.name }}</option>
+                </select>
+
+
+
+                <br><br>商品信息<br>
+                <textarea rows="5" style="width: 60%" id="add_goods_info"></textarea>
+                <br>商品描述<br>
+                <textarea rows="5" style="width: 60%" id="add_goods_describe"></textarea>
+
+<!--                <form enctype="multipart/form-data" id="uploadForm">-->
+<!--                <p>首页图片&emsp; <input name="add_view_address" type="file"></p>-->
+<!--                    <input type="hidden" name="file_name" value="">-->
+<!--                </form>-->
+
+                <input type="button" value="确认添加" @click="add_goods()">
+                <hr>
+            </div>
+
+            <div v-show="info_state===3" style="line-height: 2" id="modify_goods">
+                <hr>
+                <p>商品ID&emsp;&emsp; <input v-model:value="modify_goods_id" type="text"> <input type="button" value="编辑商品" @click="get_modify_goods()" style="width: 100px"></p>
+<!--                <p class="tips">&emsp;修改商品信息</p>-->
+                <p>商品名&emsp;&emsp; <input v-model:value="modify_goods.name" type="text" autofocus required></p>
+                <p>标题描述&emsp; <input v-model:value="modify_goods.subtitle" type="text" required></p>
+                <p>商品单价&emsp; <input style="width: 100px;" v-model:value="modify_goods.price" type="number" required> 元</p>
+                <p>商品库存&emsp; <input style="width: 100px;" v-model:value="modify_goods.stock" type="number" required> 件</p>
+                <p>关键词&emsp;&emsp; <input v-model:value="modify_goods.key_words" type="text" required></p>
+                商品类别&emsp;
+                <select style="width: 100px;height: 30px" id="modify_goods_cat">
+                    <option v-for="item in goods_cat_list" :value="item.category_id">{{ item.name }}</option>
+                </select>
+                <br><br>商品信息<br>
+                <textarea rows="5" style="width: 60%" id="modify_goods_info"></textarea>
+                <br>商品描述<br>
+                <textarea rows="5" style="width: 60%" id="modify_goods_describe"></textarea>
+                <input type="button" value="确认修改" @click="submit_goods_modify()">
+                <hr>
+            </div>
+
+            <div v-show="info_state===4" style="line-height: 2" id="file_upload">
+                <hr>
+<!--                <p class="tips">&emsp;文件上传</p>-->
+                <form enctype="multipart/form-data" id="uploadForm">
+                    <p style="margin-bottom: 10px;">商品ID&emsp;&emsp; <input style="display: inline-block;width: 10%;" type="text" name="goods_id" ></p>
+                    请选择上传图片路径&emsp;
+                    <select style="width: 400px;height: 30px" id="upload_type_select">
+                        <option v-for="item in upload_type_list" :value="item.type_id">{{ item.name }}</option>
+                    </select>
+                    <br>
+                    <input style="margin-bottom: 10px;" type="file" name="file" /><br>
+                    <input style="width: 20%;" class="blue button" type="button" value="确认上传" @click="upload_goods_file()">
+                </form>
+                <hr>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/vue.js"></script>
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
+<script>
+
+    <!--    html加载完成时-->
+    $(document).ready(function () {
+        vue_goods_management.query_all_goods_cat();
+        vue_goods_management.get_goods_list();
+    })
+
+    function search(){
+        //获取筛选条件
+        var category_id=$("#goods_cat option:selected").val();
+        var sort_id=$("#sort_way option:selected").val();
+        var min_price=vue_goods_management.search_min_price;
+        var max_price=vue_goods_management.search_max_price;
+        var goods_name=vue_goods_management.search_goods_name;
+        $.ajax({
+            type:"post"
+            ,url:"http://localhost:8081/goods/query_goods_list"
+            ,data:{
+                "category_id":category_id,
+                "sort_id":sort_id,
+                "min_price":min_price,
+                "max_price":max_price,
+                "goods_name":goods_name
+            }
+            ,success:function(data){
+                // console.log(data);
+                vue_goods_management.goods_list=data;
+            }
+            ,error:function(err){
+                alert(err.result);
+            }
+        });
+    }
+
+    function downLoadPdf() {
+        content = $('#goods_table');
+        content = content ? content : null;
+        // 条件判断是否打印
+        if (!content) {
+            alert("打印失败，请重新操作")
+            return false
+        }
+        // 开始打印
+        console.log(content)
+        var contentWidth = content.width();
+        var contentHeight = content.height();
+        var canvas = document.createElement("canvas")
+        canvas.width = contentWidth
+        canvas.height = contentHeight
+        var context = canvas.getContext("2d");
+        html2canvas(content, {
+            allowTaint: true,
+            scale: 2  // 提升画面质量，但是会增加文件大小
+        }).then(function (canvas) {
+            var pdfWidth = canvas.width;
+            var pdfHeight = canvas.height;
+            var pageHeight = pdfWidth / 592.28 * 841.89;
+            var leftHeight = pdfHeight;
+            var position = 0;
+            var imgWidth = 595.28;
+            var imgHeight = 595.28 / pdfWidth * pdfHeight;
+            var pageData = canvas.toDataURL("img/jpeg", 1.0);
+            var pdf = new jsPDF('', 'pt', 'a4');
+            // 判断打印dom高度是否需要分页，如果需要进行分页处理
+            if (leftHeight < pageHeight) {
+                pdf.addImage(pageData, "JPEG", 0, 0, imgWidth, imgHeight)
+            } else {
+                while (leftHeight > 0) {
+                    pdf.addImage(pageData, "JPEG", 0, position, imgWidth, imgHeight)
+                    leftHeight -= pageHeight
+                    position -= 841.89
+                    if (leftHeight > 0) {
+                        pdf.addPage()
+                    }
+                }
+            }
+            pdf.save("导出数据.pdf")
+        })
+    }
+
+    //订单栏
+    var vue_goods_management=new Vue({
+        el:"#goods_management",
+        data:{
+            add_name:'',
+            add_subtitle:'',
+            add_price:0,
+            add_stock:0,
+            add_key_words:'',
+            info_state:1,
+            goods_list:[],
+            goods_cat_list:[],
+            add_image_num:0,
+            add_image_list:new Array(5).fill(null),
+            old_password:'',
+            new_password:'',
+            confirm_password:'',
+            address:'',
+            name:'',
+            phone_number:'',
+            search_goods_name:'',
+            sort_way_list:[
+                {name:'默认排序',sort_id:0},
+                {name:'按销量排序',sort_id:1},
+                {name:'高价优先',sort_id:2},
+                {name:'低价优先',sort_id:3}
+            ],
+            search_min_price:0,
+            search_max_price:100,
+            modify_goods_id:0,
+            modify_goods:{},
+            upload_type_list:[
+                {name:'首页图片',type_id:0},
+                // {name:'商品视频',type_id:1},
+                // {name:'更多图片',type_id:2},
+            ],
+        },
+        methods:{
+            change_state_to_1:function () {
+                this.info_state=1;
+            },
+            change_state_to_2:function () {
+                this.info_state=2;
+            },
+            change_state_to_3:function () {
+                this.info_state=3;
+            },
+            change_state_to_4:function () {
+                this.info_state=4;
+            },
+            get_goods_list:function () {
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/goods/query_all_goods"
+                    ,data:{
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        that.goods_list=data;
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            query_all_goods_cat:function () {
+                //this就是vue的实例vm
+                var that=this
+                axios.get('http://localhost:8081/goods/query_all_goods_cat').then(
+                    function (response) {
+                        that.goods_cat_list=response.data;
+                    },function (err){
+                        alert('错误');
+                        console.log(err);
+                    }
+                )
+            },
+            get_modify_goods:function () {
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/goods/get_goods"
+                    ,data:{
+                        'goods_id':that.modify_goods_id,
+                    }
+                    ,success:function(data){
+                        that.modify_goods=data;
+                        $('#modify_goods_info').val(data.goods_info);
+                        $('#modify_goods_describe').val(data.describe);
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            }
+            ,
+            check_goods_detail:function (goods_id) {
+                window.location.href="http://localhost:8081/admin_goods.html?goods_id="+goods_id;
+            },
+            add_goods:function () {
+                if(confirm("确认提交？")===false){
+                    return;
+                }
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/goods/add_goods"
+                    ,data:{
+                        'name':that.add_name,
+                        'price':that.add_price,
+                        'stock':that.add_stock,
+                        'sale':0,
+                        'subtitle':that.add_subtitle,
+                        'goods_info':$('#add_goods_info').val(),
+                        'describe':$('#add_goods_describe').val(),
+                        'category_id':$("#add_goods_cat option:selected").val(),
+                        'key_words':that.add_key_words
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        alert('添加成功！');
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            submit_goods_modify:function () {
+                if(confirm("确认提交？")===false){
+                    return;
+                }
+                var that=this;
+                $.ajax({
+                    type:"post"
+                    ,url:"http://localhost:8081/goods/modify_goods"
+                    ,data:{
+                        'goods_id':that.modify_goods_id,
+                        'name':that.modify_goods.name,
+                        'price':that.modify_goods.price,
+                        'stock':that.modify_goods.stock,
+                        'subtitle':that.modify_goods.subtitle,
+                        'goods_info':$('#modify_goods_info').val(),
+                        'describe':$('#modify_goods_describe').val(),
+                        'category_id':$("#modify_goods_cat option:selected").val(),
+                        'key_words':that.modify_goods.key_words
+                    }
+                    ,success:function(data){
+                        console.log(data);
+                        alert('修改成功！');
+                    }
+                    ,error:function(err){
+                        alert(err.result);
+                    }
+                });
+            },
+            upload_goods_file:function () {
+
+                // var file_upload_type=$("#upload_type_select option:selected").val()
+                var file_upload_type='0';
+                // if(confirm("确认提交？")===false){
+                //     return;
+                // }
+                if(file_upload_type==='0'){
+                    // alert('首页图片');
+                    var formData = new FormData($('#uploadForm')[0]);
+                    $.ajax({
+                        type:"post"
+                        ,url:"/upload_view_image"
+                        ,data:formData
+                        ,cache: false
+                        ,processData: false
+                        ,contentType: false
+                        ,success:function(data){
+                            console.log(data);
+                            alert("上传成功!");
+                        }
+                        ,error:function(err){
+                            alert(err.result);
+                        }
+                    });
+                }
+            }
+        }
+    })
+
+</script>
+
+
+</body>
+</html>
